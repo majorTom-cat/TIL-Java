@@ -1,0 +1,170 @@
+스레드(thread) : 프로그램의 실행 흐름 혹은
+cpu가 실행할 수 있는 실행의 최소 단위
+
+Program : 컴퓨터에서 실행될 때 특정 작업(specific task)을 수행하는 일련의 명령어들의 모음(집합)이다.
+process : 실행중에 있는 프로그램
+thread : cpu가 실행할 수 있는 가장 작은 실행 단위
+
+멀티스레드는 각 스레드가 독립적으로 동작
+관련 파일 : thread.PNG
+
+cpu는 특정시점에 하나의 작업만 수행
+1번 스레드 사용중엔 2번 스레드 작업 일시중지
+
+time quantum(time slice) 일정 시간만 cpu 쓰도록 운영체제가 관리(queue 형식)
+-------------------------------------------------------------------------------
+
+스레드를 생성하는 방법 두가지
+- java.lang.Thread 클래스를 이용하는 방법
+- java.lang.Runnable 인터페이스를 이용하는 방법
+
+1. Thread 클래스를 상속받는 클래스를 선언
+java.lang.Thread 클래스와 서브클래스들을 스레드 클래스(thread class)라고 부름
+
+java.lang.Thread 클래스의 sleep 메소드
+- 일정 시간이 경과되기를 기다리는 메소드. 반드시 try catch문으로 예외처리 필요
+
+관련 파일 : DigitThread.java  MultithreadExample1.java
+-------------------------------------------------------------------------------
+
+네 개의 스레드로 실행되는 멀티스레드 프로그램 (main을 실행하는 thread 포함)
+
+각각 독립된 형태로 실행되며 누가 먼저 수행 완료될지는 모름.
+운영체제의 스케줄링 큐 상황에 따라 다르다.
+
+관련 파일 : DigitThread.java  AlphabetThread.java   MultithreadExample2.java
+-------------------------------------------------------------------------------
+
+2. .Runnable 인터페이스를 구현하는 클래스를 선언
+ java.lang.Runnable 인터페이스를 상속받은 클래스는 스레드 클래스가 아님
+
+Runnable 인터페이스를 구현하는 클래스의 객체를 생성해서
+Thread 클래스 생성자의 파라미터로 사용
+
+관련 파일 : SmallLetters.java   MultithreadExample3.java
+-------------------------------------------------------------------------------
+
+인터페이스를 사용해야만 하는 경우에는
+
+특정 패키지에 속하는 Numbers 클래스
+
+package kr.co.bsw; // 이 클래스는 bsw.co.kr이라는 도메인을 가진 회사에 속한다
+public class Numbers {
+   protected void list(int start, int end) {
+     for (int cnt = start; cnt <= end; cnt++) {
+       System.out.printf("(%d)", cnt);
+     }
+   }
+}
+
+Runnable 인터페이스를 구현하는 Numbers의 서브클래스
+
+다른 도메인을 가진 회사에서 이 클래스를 스레드로 활용하려면?
+
+package kr.co.asw; // 이 클래스는 asw.co.kr이라는 도메인을 가진 회사에 속한다
+public class NumbersRunnable extends kr.co.bsw.Numbers implements Runnable {
+  public void run() {
+    list(1, 30); // 슈퍼 클래스의 메소드 호출
+  }
+}
+
+-------------------------------------------------------------------------------
+
+스레드는 각각 독립적으로 동작한다고 했는데 만약 두 스레드간 데이터를 교환하는 등의
+커뮤니케이션이 필요하다면 ==> 공유 영역을 만든다
+
+공유 영역을 만드는 방법
+레퍼런스 타입으로 선언해야 여러 스레드가 참조값을 가지고 접근할 수 있다
+
+29/50
+파이 값을 구하는 프로그램. 파이값이 계산되기 전에 0.0 값을 출력해버리는 이유
+Thread1이 작동하기 시작해서 result를 새로 저장하기 전에 thread2가 sharedarea값을 가져가서 작동하기 때문에
+
+critical section의 동기화 작업이 필요함.
+thread1 이 작업을 끝내기 전엔 thread2가 sharedArea에 접근하지 못하도록 하는것. 순서를 맞춰주는 개념
+동기화(synchronization) 혹은 상호배제(mutual exclusion) 라고도 함
+
+관련 파일 : SharedArea.java   CalcThread.java   PrintThread.java    MultithreadExample4.java
+-------------------------------------------------------------------------------
+
+면접 질문을 하면 절대 쫄지 말자. 살짝 틀려도 괜찮다. 당당하게 어필
+
+31/50
+thread2 는 할당받은 시간동안 계속 조건테스트만 함. 그래서 시간 오래걸림
+	바쁜 대기(Busy Waiting)
+
+실제 구현할땐 이런 기능을 잘 쓰진 않음. 바쁜 대기로 자원 계속 소모. 비효율적
+
+-------------------------------------------------------------------------------
+
+공유 영역에 있는 데이터를 여러 스레드가 사용할시 반드시 동기화 해줘야함. 자바 개발자들이 많이 씀
+
+데이터를 동기화시켜 thread1의 작업이 끝나기 전에 thread2가 공유 데이터에 접근하지 못하도록 함
+  MultithreadExample5 에서 thread1.start() 가 먼저 수행되어 thread1의 작업을 thread2가 기다림
+  synchronized (sharedArea) { }
+
+혹은 공유 데이터를 필드로 하는 클래스의 메소드에 synchronized (this) 혹은 메소드 선언 제일 앞에 synchronized
+키워드를 쓰고 공유할 데이터를 다루는 메소드를 코딩한다
+
+관련 파일 : Account.java  SharedArea.java   TransferThread.java   PrintThread.java  MultithreadExample5.java
+-------------------------------------------------------------------------------
+
+thread간의 신호 전송
+
+신호를 보내는 notify() 메소드와 wait() 메소드는 같은 객체여야만 신호를 주고 받을 수 있다.
+
+보내기
+synchronized (sharedArea) {
+  sharedArea.notify();
+}
+
+받기
+try {
+  synchronized (sharedArea) {
+    sharedArea.wait();
+  }
+}
+catch (InterruptedException e) {
+  System.out.println(e.getMessage());
+}
+
+앞선 busy wait 예제에서 while(sharedArea.isReady != true) 의 방법으로 바쁜 대기를 시키면 메모리 소모가 많지만
+wait() 메소드를 수행하면 cpu는 대기상태가 되어 해당 스레드는 cpu를 할당받지 않고 대기시킨다.
+다른 thread만 cpu를 할당받아 작업에 집중할 수 있게 된다.
+
+notifyAll() 이 아닌 notify() 일 경우 임의의 한 wait() 만 신호 받음
+
+관련 파일 : SharedArea.java  CalcThread.java  PrintThread.java  MultithreadExample7.java
+-------------------------------------------------------------------------------
+thread의 라이프 사이클
+- 스레드가 생성되서 start 메소드를 호출하기 전까지의 상태(New Thread)
+- run 메소드 실행 중 상태 -> 다시 두 가지 상태로 나뉨
+  - 실행 가능 상태(Runnable)
+  - 실행 불가능 상태(Not Runnable) // wait() 같은 상황
+- run 메소드 완료 후의 상태
+
+thread의 상태를 알아내는 메소드는 Thread 클래스의 getState 메소드
+Thread.State state = thread.getStare();
+
+Thread.State 는 열거타입
+
+열거 상수             의미하는 스레드의 상태
+
+NEW                  실행되기 전 상태
+RUNNABLE             실행 가능 상태
+WAITING wait         메소드를 호출하고 있는 상태
+TIMED_WAITING sleep  메소드를 호출하고 있는 상태
+BLOCKED              다른 스레드의 동기화 블록이나 동기화 메소드가 끝나기를 기다리고 있는 상태
+TERMINATED           실행을 마친 상태
+
+관련 파일 : 위쪽 관련 파일에서 MonitorThread.java  MultithreadExample9.java 추가
+
+웹개발 하더라도 동기화 개념 알고는 있어야됨
+-------------------------------------------------------------------------------
+
+아까 4번예제에서 PrintThread 클래스의 while문 안에 print문 한 줄 넣어주니까 결과가 달라지는 것 같습니다.
+이 경우에는 CalcThread 클래스의 for문에서 cnt 값의 범위를 100만으로 늘려주어도 잘 동작합니다.
+
+이유 : Ex4. 프린트 객체를 모니터에 out으로 출력시킬때 값을 받아오는 과정에서 wait() 상황이 생기게 되고
+time quantum을 더 짧게 소모하고 wait도 하게되어 루프가 더 빨리 됨
+바쁜 대기 상태는 cpu를 더 오래 소모한다
