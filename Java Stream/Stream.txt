@@ -1,0 +1,85 @@
+10장 day16
+스트림 : 데이터의 흐름
+
+유니코드는 16비트로 구성
+
+FileReader 클래스
+• FileReader 클래스 : 텍스트 파일을 읽는 클래스
+
+이클립스는 파일 참조시 프로젝트 폴더가 기본 루트
+
+파일의 끝 문자는 -1 이다. -1을 읽으면 종료하는 논리
+
+while (true) { // 파일의 문자를 하나씩 읽음
+	int data = reader.read();
+	if (data == -1)
+		break;
+	char ch = (char) data;
+	System.out.print(ch);
+}
+
+한꺼번에 여러 문자를 읽는 read 메소드
+int num = reader.read(arr);
+
+올바른 예
+char arr[] = new char[100];
+int num = reader.read(arr);
+
+자바는 int 타입보다 작은타입은 내부적으로 int로 처리(char : 2 byte, int : 4 byte)
+
+관련 파일 : ReaderExample1.java
+----------------------------------------------------------------------------------
+
+FileWriter 클래스
+• FileWriter 클래스 : 텍스트를 파일에 쓰는 클래스
+
+관련 파일 : WriterExample1.java
+----------------------------------------------------------------------------------
+FileOutputStream 클래스
+• FileOutputStream 클래스 : 바이트 데이터를 파일에 쓰는 클래스
+
+FileInputStream 클래스
+• FileInputStream 클래스 : 파일로부터 바이트 단위로 데이터를 읽는 클래스
+
+Run Configurations 로 실행. Argument 에 output.dat 을 쓴다
+fileDump : String args[] 명령행 매개변수에 output.dat 파일을 전달
+byte arr[] = new byte[16] 을 선언하고 int num = in.read(arr) 로 데이터를 담는다
+
+관련 파일 : OutputStreamExample1.java, fileDump.java
+----------------------------------------------------------------------------------
+
+입출력 기능/성능을 향상시키는 클래스들
+
+주로 쓰는것
+
+BufferedReader         데이터를 한꺼번에 읽어서 버퍼에 저장해두는 클래스
+BufferedInputStream
+
+BufferedWriter         데이터를 버퍼에 저장해두었다가 한꺼번에 출력하는 클래스
+BufferedOutputStream
+
+
+BufferedReader, BufferedWriter 짝궁. 행버퍼
+BufferedInputStream, BufferedOutputStream 짝. 행버퍼
+
+- 이 클래스들은 모두 java.io 패키지에 속함
+- 이 클래스들은 단독으로는 사용될 수 없음
+
+
+객체의 소멸 시점은 참조하는 레퍼런스 변수가 사라질때 JVM의 garvagecollector에서 이 쓰레기객체를 소멸시킴
+
+
+
+프롬프트에서
+Java FileDump output.dat
+
+문자스트림
+FileReader
+FileWriter
+
+바이트스트림
+FileInputStream
+FileOutputStream
+
+
+Buffer Memory
