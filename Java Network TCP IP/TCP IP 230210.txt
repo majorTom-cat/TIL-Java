@@ -69,3 +69,22 @@ HTML5 => WebSocket 활용해 채팅 가능
 한글전송은 끝내 실패.
 
 관련 파일 : SenderThread.java  ReceiverThread.java  ClientExample3.java  ServerExample3.java
+
+------------------------------------------------------------------------------
+230213
+여러 명이 참여하는 채팅 프로그램
+
+이번엔 Server를 열고 여러명의 사용자가 있다고 가정하였다.
+
+Client가 socket을 만들어 Server에 접속을 요청하면 server socket은 각 client 마다
+socket 객체를 만들어 client와 1:1 매칭을 시켜준다.
+client는 명령 프롬프트에서 java ClientExample4 닉네임
+닉네임에 이름을 쓰고 서버에 접속하면 첫번째 메세지로 닉네임 관련 메세지가 서버로 전달.
+서버가 각 client에게 메세지를 뿌려준다.
+
+각 client는 socket객체를 SenderThread와 ReceiverThread 클래스의 객체의 생성자 파라미터로 전달한다.
+cilent가 보낸 메세지는 PerclientThread의 동기화 리스트를 통해 각 client에게 뿌려준다.
+
+
+관련 파일 : PerClinetThread.java	ServerExample4.java  SenderThread.java  ReceiverThread.java
+  ClientExample4.java  NetworkChat1.png  NetworkChat2.png
