@@ -1,0 +1,130 @@
+제네릭(Generic)은 클래스 내부에서 지정하는 것이 아닌 외부에서 사용자에 의해 지정되는 것을 의미한다.
+특정(Specific) 타입을 미리 지정해주는 것이 아닌 필요에 의해 지정할 수 있도록 하는 일반(Generic) 타입이라는 것
+
+콜렉션 객체 타입인 ArrayList를 구현할때
+ArrayList<String> arr = new ArrayList<>();
+처럼 <> 안에 타입을 기술하는것이 제네릭스였다.
+
+Generic(제네릭)의 장점
+1. 제네릭을 사용하면 잘못된 타입이 들어올 수 있는 것을 컴파일 단계에서 방지할 수 있다.
+2. 클래스 외부에서 타입을 지정해주기 때문에 따로 타입을 체크하고 변환해줄 필요가 없다. 즉, 관리하기가 편하다.
+3. 비슷한 기능을 지원하는 경우 코드의 재사용성이 높아진다.
+
+컴파일시 <>부분은 사라지고 컴파일되지만 사용자가 코딩시에 타입을 지정하므로 원하지 않는 형변환이나 오류를 방지할 수 있다.
+
+제네릭 타입을 두 개로 둘 수도 있다. (대표적으로 타입 인자로 두 개 받는 대표적인 컬렉션인 HashMap을 생각해보자.)
+
+public class ClassName <T, K> { ... }
+
+public class Main {
+	public static void main(String[] args) {
+		ClassName<String, Integer> a = new ClassName<String, Integer>();
+	}
+}
+위 예시대로라면 T는 String이 되고, K는 Integer가 된다.
+
+이 때 주의해야 할 점은 타입 파라미터로 명시할 수 있는 것은 참조 타입(Reference Type)밖에 올 수 없다.
+즉, int, double, char 같은 primitive type은 올 수 없다는 것이다.
+그래서 int형 double형 등 primitive Type의 경우 Integer, Double 같은 Wrapper Type으로 쓰는 이유가 바로 위와같은 이유다.
+
+또한 바꿔 말하면 참조 타입이 올 수 있다는 것은 사용자가 정의한 클래스도 타입으로 올 수 있다는 것이다.
+
+
+// 제네릭 클래스
+class ClassName<E> {
+
+	private E element;	// 제네릭 타입 변수
+
+	void set(E element) {	// 제네릭 파라미터 메소드
+		this.element = element;
+	}
+
+	E get() {	// 제네릭 타입 반환 메소드
+		return element;
+	}
+
+}
+
+class Main {
+	public static void main(String[] args) {
+
+		ClassName<String> a = new ClassName<String>();
+		ClassName<Integer> b = new ClassName<Integer>();
+
+		a.set("10");
+		b.set(10);
+
+		System.out.println("a data : " + a.get());
+		// 반환된 변수의 타입 출력
+		System.out.println("a E Type : " + a.get().getClass().getName());
+
+		System.out.println();
+		System.out.println("b data : " + b.get());
+		// 반환된 변수의 타입 출력
+		System.out.println("b E Type : " + b.get().getClass().getName());
+
+	}
+}
+ClassName이란 객체를 생성할 때 <> 안에 타입 파라미터(Type parameter)를 지정한다.
+그러면 a객체의 ClassName의 E 제네릭 타입은 String으로 모두 변환된다.
+반대로 b객체의 ClassName의 E 제네릭 타입은 Integer으로 모두 변환된다.
+
+위 코드를 실행시키면 다음과 같이 출력된다.
+
+a data : 10
+a E Type : java.lang.String
+
+b data : 10
+b E Type : java.lang.Integer가
+
+
+만약 제네릭을 두 개 쓰고 싶다면 이렇게 할 수도 있다.
+// 제네릭 클래스
+class ClassName<K, V> {
+	private K first;	// K 타입(제네릭)
+	private V second;	// V 타입(제네릭)
+
+	void set(K first, V second) {
+		this.first = first;
+		this.second = second;
+	}
+
+	K getFirst() {
+		return first;
+	}
+
+	V getSecond() {
+		return second;
+	}
+}
+
+// 메인 클래스
+class Main {
+	public static void main(String[] args) {
+
+		ClassName<String, Integer> a = new ClassName<String, Integer>();
+
+		a.set("10", 10);
+
+
+		System.out.println("  fisrt data : " + a.getFirst());
+		// 반환된 변수의 타입 출력
+		System.out.println("  K Type : " + a.getFirst().getClass().getName());
+
+		System.out.println("  second data : " + a.getSecond());
+		// 반환된 변수의 타입 출력
+		System.out.println("  V Type : " + a.getSecond().getClass().getName());
+	}
+}
+
+결과는 다음과 같다.
+first data : 10
+K Type : java.lang.String
+second data : 10
+V Type : java.lang.Integer
+
+이렇게 외부 클래스에서 제네릭 클래스를 생성할 때 <> 괄호 안에 타입을 파라미터로 보내 제네릭 타입을 지정해주는 것.
+이 것이 바로 제네릭 프로그래밍이다.
+
+
+출처 : https://st-lab.tistory.com/153
